@@ -5,8 +5,7 @@ using namespace std;
 using pi = pair<int, int>;
 
 int N, T;
-vector<pi> v;
-set<pi> s;
+
 int dist(pi p1, pi p2)
 {
     return (p1.first - p2.first) * (p1.first - p2.first) + (p1.second - p2.second) * (p1.second - p2.second);
@@ -20,8 +19,8 @@ int main()
     while (T--)
     {
         cin >> N;
-        v.clear();
-        s.clear();
+        vector<pi> v;
+        set<pi> s;
         for (int i = 0; i < N; i++)
         {
             pi temp;
@@ -38,8 +37,8 @@ int main()
             {
                 pi cur2 = v[j];
                 int dx = cur2.first - cur1.first, dy = cur2.second - cur1.second;
-                if (s.find({cur2.first - dy, cur2.second + dx}) != s.end() &&
-                    s.find({cur1.first - dy, cur1.second + dx}) != s.end())
+                if (s.count({cur2.first - dy, cur2.second + dx})&&
+                    s.count({cur1.first - dy, cur1.second + dx}))
                 {
                     ans = max(ans, dist(cur1, cur2));
                 }
