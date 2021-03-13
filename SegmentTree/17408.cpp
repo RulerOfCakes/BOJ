@@ -34,11 +34,10 @@ public:
 		//sum.resize(size * 2);
 	}
 	void update(int node, long long x) {
-		int idx = size + node - 1;
+		int idx = size + node;
 		tree[idx].first = x;
-        int mid = idx / 2;
-		while (idx) {
-			tree[idx/2] = maxpair(tree[idx], tree[idx+1]);
+		while (idx > 1) {
+			tree[idx/2] = maxpair(tree[idx], tree[idx^1]);
             idx >>= 1;
 		}
 	}
