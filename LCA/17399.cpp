@@ -1,0 +1,189 @@
+
+#include <bits/stdc++.h>
+
+using namespace std;
+using pi = pair<int, int>;
+
+const int MAXPARENT = 18;
+int N, M;
+int parent[100002][18];
+int depth[100002];
+int length[100002];
+vector<int> adj[100002];
+vector<vector<pi>> v;
+
+//initializing base parent and depths
+void initTree(int x)
+{
+    for (pi next : v[x])
+    {
+        if (depth[next.first] == -1)
+        {
+            parent[next.first][0] = x;
+            depth[next.first] = depth[x] + 1;
+            length[next.first] = length[x] + next.second;
+            initTree(next.first);
+        }
+    }
+}
+
+int lca(int a, int b)
+{
+    if (depth[a] < depth[b])
+        swap(a, b);
+    int diff = depth[a] - depth[b];
+    //int ans = length[a] + length[b];
+    //getting rid of depth diff
+    for (int j = 0; diff; j++)
+    {
+        if (diff % 2)
+            a = parent[a][j];
+        diff /= 2;
+    }
+
+    if (a != b)
+    {
+        for (int j = MAXPARENT - 1; j >= 0; j--)
+        {
+            if (parent[a][j] != -1 && parent[a][j] != parent[b][j])
+            {
+                a = parent[a][j];
+                b = parent[b][j];
+            }
+        }
+        a = parent[a][0];
+    }
+    // ans -= length[a] * 2;
+    return a;
+}
+
+int lcalen(int a, int b)
+{
+    if (a <= 0 || b <= 0)
+        return -1;
+    int ans = length[a] + length[b];
+    ans -= length[lca(a, b)] * 2;
+    return ans;
+}
+
+int center(int a, int b)
+{
+    if (a > b)
+        swap(a, b);
+    int tlca = lca(a, b);
+    int dist = lcalen(a, b);
+    if (dist % 2 == 1)
+        return 0;
+    int k = dist / 2+1;
+    int ret = 0;
+    int diff = depth[a] - depth[tlca];
+    if (diff + 1 >= k)
+    {
+        k--;
+        ret=a;
+        for (int i = 18; i >= 0; i--)
+        {
+            if ((1LL << i) <= k)
+            {
+                k -= (1 << i);
+                ret = parent[ret][i];
+            }
+        }
+    }
+    else
+    {
+        ret=b;
+        k = depth[b] - depth[tlca] + 1 + diff - k;
+        for (int i = 18; i >= 0; i--)
+        {
+            if ((1LL << i) <= k)
+            {
+                k -= (1 << i);
+                ret = parent[ret][i];
+            }
+        }
+    }
+    return ret;
+}
+
+int main()
+{
+    ios_base ::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    cin >> N;
+    v = vector<vector<pi>>(N + 1, vector<pi>());
+    for (int i = 0; i < N - 1; i++)
+    {
+        int a, b, c;
+        cin >> a >> b;
+        v[a].push_back({b, 1});
+        v[b].push_back({a, 1});
+        //adj[a].push_back(b);
+        //adj[b].push_back(a);
+    }
+
+    fill(depth, depth + N + 1, -1);
+    fill(length, length + N + 1, -1);
+    memset(parent, -1, sizeof(parent));
+    depth[0] = -1;
+    length[0] = -1;
+    depth[1] = 0;
+    length[1] = 0;
+    initTree(1);
+    //1 is the root
+    for (int j = 0; j < MAXPARENT - 1; j++)
+    {
+        for (int i = 2; i <= N; i++)
+        {
+            if (parent[i][j] != -1)
+            {
+                parent[i][j + 1] = parent[parent[i][j]][j];
+            }
+        }
+    }
+
+    cin >> M;
+
+    for (int i = 0; i < M; i++)
+    {
+        int a, b, c;
+        cin >> a >> b >> c;
+        if (a == b && b == c)
+        {
+            cout << a << '\n';
+            continue;
+        }
+        else if (a == b || b == c || a == c)
+        {
+            int t1 = min(a, min(b, c)), t2 = max(a, max(b, c));
+            int ans = center(t1, t2);
+            if(ans==0){
+                cout << -1 << '\n';
+            }
+            else{
+                cout << ans << '\n';
+            }
+            
+            continue;
+        }
+        vector<int> v({a, b, c});
+        vector<int> tlca({center(a, b), center(a, c), center(b, c)});
+        if (tlca[0]!=0 && (lcalen(a, tlca[0]) == lcalen(c, tlca[0])))
+        {
+            cout << tlca[0] << '\n';
+        }
+        else if (tlca[2]!=0&&(lcalen(b, tlca[2]) == lcalen(a, tlca[2])))
+        {
+            cout << tlca[2] << '\n';
+        }
+        else if (tlca[1]!=0&&(lcalen(c, tlca[1]) == lcalen(b, tlca[1])))
+        {
+            cout << tlca[1] << '\n';
+        }
+        else
+        {
+            cout << -1 << '\n';
+        }
+    }
+}
