@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+using ll = long long;
+
 int N, M, K;
 
 class segtree {
@@ -56,21 +58,14 @@ public:
 		int mid = (nStart + nEnd) / 2;
 		return getsum(node * 2, nStart, mid, rStart, rEnd) + getsum(node * 2 + 1, mid+1, nEnd, rStart, rEnd);
 	}
-	long long getmax(int node, int nStart, int nEnd, int rStart, int rEnd){
+	ll query(ll val, int node, int nStart, int nEnd){
 		update_lazy(node, nStart, nEnd);
-		if(nEnd < rStart || nStart > rEnd) return 0;
-		if(rStart <= nStart && nEnd > rEnd) return tree[node];
-		int mid = (nStart + nEnd) / 2;
-		return max(getmax(node*2, nStart, mid, rStart, rEnd), getmax(node*2+1, mid+1, nEnd, rStart, rEnd));
-	}
-	long long lazies(int node) {
-		int idx = node + size - 1;
-		long long ans = 0;
-		while (idx) {
-			ans += lazy[idx];
-			idx /= 2;
+		if(nStart==nEnd)return nStart;
+		int mid = (nStart+nEnd)/2;
+		if(val<=tree[node*2]){
+			return query(val, node*2, nStart, mid);
 		}
-		return ans + tree[node + size - 1];
+		else return query(val-tree[node*2], node*2+1, mid+1, nEnd);
 	}
 	
 };
@@ -78,22 +73,24 @@ public:
 int main() {
 	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 	int a, b, c;
-	cin >> N;
-	segtree seg(N);
+	cin >> N >> K;
+	segtree seg(65538);
+	ll ans = 0;
+	vector<int> inputs(N);
 	for (int n = 0; n < N; n++) {
-		cin >> a;
-		seg.update(n+1, a);
+		cin >> inputs[n];
 	}
-	cin >> M;
-	for (int i = 0; i < M; i ++ ) {
-		cin >> a;
-		if (a == 1) {
-			cin >> b >> c;
-			seg.update(b, c);
-		}
-		if (a == 2) {
-			cin >> b >> c;
-			cout << seg.getmax(1, 1, seg.size, b, c) << "\n";
-		}
+
+	for(int i = 0 ;i  < K; i++){
+		seg.update_range(1,1,seg.size,inputs[i]+1,inputs[i]+1,1);
 	}
+	ans = seg.query((K+1)/2, 1, 1, seg.size)-1;
+	for(int i = K; i < N; i++){
+		seg.update_range(1,1,seg.size,inputs[i]+1,inputs[i]+1,1);
+		seg.update_range(1,1,seg.size,inputs[i-K]+1,inputs[i-K]+1,-1);
+
+		ans+=seg.query((K+1)/2, 1, 1, seg.size)-1;
+	}
+	cout << ans;
+	
 }
