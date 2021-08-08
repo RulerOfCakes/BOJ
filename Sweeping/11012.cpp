@@ -83,7 +83,7 @@ int main()
         ylist = vector<int>();
         map<int,int> ycds;
         cin >> N >> M;
-        segtree seg(2 * INF);
+        
         vector<pi> folks;
         vector<ppi> v;
         //v layout
@@ -94,7 +94,7 @@ int main()
             a+=2;
             b+=2;
             folks.push_back({a, b});
-            // ylist.push_back(b);
+            ylist.push_back(b);
         }
         for (int i = 0; i < M; i++)
         {
@@ -106,39 +106,39 @@ int main()
             
             v.push_back({{a-1, 0}, {c, d}});
             v.push_back({{b, 1}, {c, d}});
-            // ylist.push_back(b);
-            // ylist.push_back(d);
+            ylist.push_back(b);
+            ylist.push_back(d);
         }
         sort(folks.begin(), folks.end());
         sort(v.begin(), v.end());
-        // sort(ylist.begin(), ylist.end());
-        // ylist.erase(unique(ylist.begin(), ylist.end()), ylist.end());
-        // for(int i = 0; i < ylist.size(); i++){
-        //     ycds[ylist[i]]=i;
-        // }
+        sort(ylist.begin(), ylist.end());
+        ylist.erase(unique(ylist.begin(), ylist.end()), ylist.end());
+        for(int i = 0; i < ylist.size(); i++){
+            ycds[ylist[i]]=i+1;
+        }
         ll ans = 0;ll mns=0;
-
+        segtree seg(ylist.size());
         int idx = 0;
         for (int i = 0; i < v.size(); i++)
         {
 
             int cx = v[i].first.first, param = v[i].first.second,
                 tsy = v[i].second.first, tey = v[i].second.second;
-            // int sy = lower_bound(ylist.begin(), ylist.end(), tsy) - ylist.begin() + 1;
-            // int ey = lower_bound(ylist.begin(), ylist.end(), tey) - ylist.begin() + 1;
+            int sy = lower_bound(ylist.begin(), ylist.end(), tsy) - ylist.begin() + 1;
+            int ey = lower_bound(ylist.begin(), ylist.end(), tey) - ylist.begin() + 1;
             while(idx<folks.size() && cx>=folks[idx].first){
                 //cout << "hoho\n";
-                seg.update_range(1,1,seg.size,folks[idx].second,folks[idx].second,1);
+                seg.update_range(1,1,seg.size,ycds[folks[idx].second],ycds[folks[idx].second],1);
                 idx++;
             }
             if (param == 0)
             {
-                mns+=seg.getsum(1,1,seg.size,tsy,tey);
+                mns+=seg.getsum(1,1,seg.size, sy, ey);
                 //seg.update_range(1, 1, ylist.size() - 1, sy, ey - 1, 1);
             }
             else
             {
-                ans+=seg.getsum(1,1,seg.size,tsy,tey);
+                ans+=seg.getsum(1,1,seg.size, sy, ey);
                 
                 //seg.update_range(1, 1, ylist.size() - 1, sy, ey - 1, -1);
             }
