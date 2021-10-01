@@ -1,6 +1,11 @@
 {
     "files.associations": {
         "algorithm": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "random": "cpp",
+        "cmath": "cpp",
+        "complex": "cpp",
+        "tuple": "cpp",
+        "new": "cpp"
     }
 }
