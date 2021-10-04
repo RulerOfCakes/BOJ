@@ -10,10 +10,10 @@ int T,N,K,M,sz;
 const int INF = 1e9;
 vector<int> arr;
 
-int cnt[100002];
+int cnt[101012];
 //list is faster than deque
-list<int> idxs[100002];
-int ans[100002];
+list<int> idxs[101012];
+int ans[101012];
 vector<int> bucket;
 
 void add(int i, bool dir){
