@@ -36,8 +36,7 @@ public:
 
 int main() {
 	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
-	int a, b;
-    long long c;
+	long long a,b,c;
 	cin >> N >> M>>K;
 	fwtree big(N);
 	for (int i = 1; i <= N; i++) {
