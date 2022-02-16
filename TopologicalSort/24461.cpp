@@ -37,7 +37,7 @@ int main(){
             visited[curp]=1;
 
             for(auto next : edges[curp]){
-                if(--indeg[next]<=1){
+                if(--indeg[next]==1){
                     nq.push(next);
                 }
                 if(indeg[next]==2){
