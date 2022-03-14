@@ -33,3 +33,5 @@
 
 temp/
 Aloha/
+*.in
+temp.*
