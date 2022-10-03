@@ -12,3 +12,4 @@ solution files for Baekjoon Online Judge
 - D2 (2022-03-27)
 - 800 problems solved (2022-06-02)
 - 900 problems solved (2022-08-10)
+- 1000 problems solved (2022-10-03)
